@@ -1,9 +1,24 @@
-
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
+
+<?php
+  ob_start();
+  session_start();
+  $_default_language = hun;
+  if(!isset($_SESSION['lang'])){
+    $_SESSION['lang'] = $_default_language;
+  }
+  if(!empty($_GET['lang'])){
+    $_SESSION['lang'] = $_GET['lang'] === 'hun' ? 'hun' : 'en';
+  }
+  // Load the driver
+  require_once("rdb/rdb.php");
+  // Connect to localhost
+  $conn = r\connect('localhost');
+?>
  <html class="no-js"> <!--<![endif]-->
 	<head>
 	<meta charset="utf-8">
@@ -69,188 +84,238 @@
 	<!-- </style> -->
 	</head>
 	<body>
-	<div id="fh5co-wrap">
-	<section id="menu">
-		<header  id="fh5co-header">
-			<div class="container">
-				<nav class="fh5co-main-nav">
-					<ul>
-						<div class="dropdown">
-							<div class="dropbtn">
-								<li class="#"><a href="#menu"><span>Blog</span></a>
-									<div class="dropdown-content">
-										<a href="#terveink">Terveink</a>
-										<a href="#hamarosan">Hamarosan</a>
-									</div>
-								</li>
-							</div>
-						</div>
-						<li><a href="#"><span>Statisztikák</span></a></li>
-						<li><a href="#"><span>Rólunk</span></a></li>
-						<li><a href="#"><span>Kapcsolat</span></a></li>
-					</ul>
-				</nav>
-			</div>
-		</header>
+    <?php
+      $result = r\db('blog')->table('posts')->filter(array('language' => $_SESSION['lang']))->run($conn);
+    ?>
+    <div id="fh5co-wrap">
+      <section id="menu">
+        <header  id="fh5co-header">
+          <div class="container">
+            <nav class="fh5co-main-nav">
+              <ul>
+                <div class="dropdown">
+                  <div class="dropbtn">
+                    <li class="fh5co-active"><a href="menu"><span>Blog</span></a>
+                      <div class="dropdown-content">
+                        <?php
+                          foreach ($result as $doc){
+                        echo '<a href="'; echo $doc->title; echo '">'; echo $doc->title; echo '</a>
+                        ';
+                          }
+                        ?>
+                      </div>
+                    </li>
+                  </div>
+                </div>
+                <li><a href="#"><span>Statisztikák</span></a></li>
+                <li><a href="#"><span>Rólunk</span></a></li>
+                <li><a href="#"><span>Kapcsolat</span></a></li>
+              </ul>
+            </nav>
+          </div>
+        </header>
+        <div class="fh5co-hero" style="background-image: url(images/argonath.jpg);" data-stellar-background-ratio="0.5">
+          <div class="overlay"></div>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table">
+                <div class="fh5co-intro fh5co-table-cell">
+                  <h1 class="text-center" style="font-family:lotr;font-size:120px;">Oda s vissza</h1>
+                  <p style="font-family:lotr;font-size:40px;">Kalandozas Uj-Zelandon</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="terveink">
+        <div class="fh5co-section">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-7">
+                <h2>Terveink</h2>
+                <iframe style="margin-bottom: 1.5em;" src="https://www.google.com/maps/d/u/0/embed?mid=1SDsH-Z3tqBYVnFWNxcessWuo8K0mX5uF" width=100% height=480></iframe>
+              </div>
+              <div class="col-md-5">
+                <div align="center">
+                  <h1 class=ch1>Mindjárt indulunk!</h1>
+                  <div id="clockdiv">
+                    <div>
+                      <span class="days"></span>
+                      <div class="smalltext">Nap</div>
+                    </div>
+                    <div>
+                      <span class="hours"></span>
+                      <div class="smalltext">Óra</div>
+                    </div>
+                    <div>
+                      <span class="minutes"></span>
+                      <div class="smalltext">Perc</div>
+                    </div>
+                    <div>
+                      <span class="seconds"></span>
+                      <div class="smalltext">Másodperc</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <?php
+           foreach ($result as $doc){
+            echo
+      '<section id="'; echo $doc->title; echo '">
+        <div class="fh5co-parallax" style="background-image: url(images/'; echo $doc->header_img; echo ');" data-stellar-background-ratio="0.5">
+          <div class="overlay"></div>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table">
+                <div class="fh5co-intro fh5co-table-cell">
+                  <h1 class="text-center">'; echo $doc->title; echo'</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+		   </div>';}
+		?>
 
-		<div class="fh5co-hero" style="background-image: url(images/argonath.jpg);" data-stellar-background-ratio="0.5">
-			<div class="overlay"></div>
-			<div class="container">
-				<div class="row">
-					<div class="col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table">
-						<div class="fh5co-intro fh5co-table-cell">
-							<h1 class="text-center" style="font-family:lotr;font-size:120px;">Oda s vissza</h1>
-							<p style="font-family:lotr;font-size:40px;">Kalandozas Uj-Zelandon</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		</section>
-		<section id="terveink">
-		<div class="fh5co-section">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-7">
-						<h2>Terveink</h2>
-						<iframe style="margin-bottom: 1.5em;" src="https://www.google.com/maps/d/u/0/embed?mid=1SDsH-Z3tqBYVnFWNxcessWuo8K0mX5uF" width=100% height=480></iframe>
-					</div>
-					<div class="col-md-5">
-						<div align="center">
-							<h1 class=ch1>Mindjárt indulunk!</h1>
-							<div id="clockdiv">
-							  <div>
-								<span class="days"></span>
-								<div class="smalltext">Nap</div>
-							  </div>
-							  <div>
-								<span class="hours"></span>
-								<div class="smalltext">Óra</div>
-							  </div>
-							  <div>
-								<span class="minutes"></span>
-								<div class="smalltext">Perc</div>
-							  </div>
-							  <div>
-								<span class="seconds"></span>
-								<div class="smalltext">Másodperc</div>
-							  </div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+        <div>
+          <div class="fh5co-section">
+            <div class="container">
+              <div class="row">
+              
+                <div class="col-md-6">
+                  <div class="fh5co-feature animate-box" data-animate-effect="fadeInLeft">
+                    <div class="fh5co-icon">
+                      <i class="icon-strategy"></i>
+                    </div>
+                    <div class="fh5co-text">
+                      <h3>Strategy</h3>
+                      <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="fh5co-feature animate-box" data-animate-effect="fadeInLeft">
+                    <div class="fh5co-icon">
+                      <i class="icon-telescope"></i>
+                    </div>
+                    <div class="fh5co-text">
+                      <h3>Explore</h3>
+                      <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p>
+                    </div>
+                  </div>
+                </div>
 
-		</section>
-		<section id="hamarosan">
-		<div class="fh5co-parallax" style="background-image: url(images/flight.jpg);" data-stellar-background-ratio="0.5">
-			<div class="overlay"></div>
-			<div class="container">
-				<div class="row">
-					<div class="col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table">
-						<div class="fh5co-intro fh5co-table-cell">
-							<h1 class="text-center">Hamarosan</h1>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-<div>
-		<!-- <div class="fh5co-section"> -->
-			<!-- <div class="container"> -->
-				
-				<!-- <div class="row"> -->
-					<!-- <div class="col-md-6"> -->
-						<!-- <div class="fh5co-feature animate-box" data-animate-effect="fadeInLeft"> -->
-							<!-- <div class="fh5co-icon"> -->
-								<!-- <i class="icon-strategy"></i> -->
-							<!-- </div> -->
-							<!-- <div class="fh5co-text"> -->
-								<!-- <h3>Strategy</h3> -->
-								<!-- <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p> -->
-							<!-- </div> -->
-						<!-- </div> -->
-					<!-- </div> -->
-					<!-- <div class="col-md-6"> -->
-						<!-- <div class="fh5co-feature animate-box" data-animate-effect="fadeInLeft"> -->
-							<!-- <div class="fh5co-icon"> -->
-								<!-- <i class="icon-telescope"></i> -->
-							<!-- </div> -->
-							<!-- <div class="fh5co-text"> -->
-								<!-- <h3>Explore</h3> -->
-								<!-- <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p> -->
-							<!-- </div> -->
-						<!-- </div> -->
-					<!-- </div> -->
+                <div class="col-md-6">
+                  <div class="fh5co-feature animate-box" data-animate-effect="fadeInLeft">
+                    <div class="fh5co-icon">
+                      <i class="icon-circle-compass"></i>
+                    </div>
+                    <div class="fh5co-text">
+                      <h3>Direction</h3>
+                      <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="fh5co-feature animate-box" data-animate-effect="fadeInLeft">
+                    <div class="fh5co-icon">
+                      <i class="icon-tools"></i>
+                    </div>
+                    <div class="fh5co-text">
+                      <h3>Expertise</h3>
+                      <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+           }
+      ?>
 
-					<!-- <div class="col-md-6"> -->
-						<!-- <div class="fh5co-feature animate-box" data-animate-effect="fadeInLeft"> -->
-							<!-- <div class="fh5co-icon"> -->
-								<!-- <i class="icon-circle-compass"></i> -->
-							<!-- </div> -->
-							<!-- <div class="fh5co-text"> -->
-								<!-- <h3>Direction</h3> -->
-								<!-- <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p> -->
-							<!-- </div> -->
-						<!-- </div> -->
-					<!-- </div> -->
-					<!-- <div class="col-md-6"> -->
-						<!-- <div class="fh5co-feature animate-box" data-animate-effect="fadeInLeft"> -->
-							<!-- <div class="fh5co-icon"> -->
-								<!-- <i class="icon-tools"></i> -->
-							<!-- </div> -->
-							<!-- <div class="fh5co-text"> -->
-								<!-- <h3>Expertise</h3> -->
-								<!-- <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. </p> -->
-							<!-- </div> -->
-						<!-- </div> -->
-					<!-- </div> -->
+      <!-- <div class="fh5co-parallax" style="background-image: url(images/hero_3.jpg);" data-stellar-background-ratio="0.5"> -->
 
-				<!-- </div> -->
+        <!-- <div class="overlay"></div> -->
 
-			<!-- </div> -->
-		<!-- </div> -->
+        <!-- <div class="container"> -->
+
+          <!-- <div class="row"> -->
+
+            <!-- <div class="col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table"> -->
+
+              <!-- <div class="fh5co-intro fh5co-table-cell"> -->
+
+                <!-- <h1 class="text-center">Less is more</h1> -->
+
+                <!-- <p>Made with love by the fine folks at <a href="http://freehtml5.co">FreeHTML5.co</a></p> -->
+
+              <!-- </div> -->
+
+            <!-- </div> -->
+
+          <!-- </div> -->
+
+        <!-- </div> -->
+
+      <!-- </div> -->
 
 
-		<!-- <div class="fh5co-parallax" style="background-image: url(images/hero_3.jpg);" data-stellar-background-ratio="0.5"> -->
-			<!-- <div class="overlay"></div> -->
-			<!-- <div class="container"> -->
-				<!-- <div class="row"> -->
-					<!-- <div class="col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table"> -->
-						<!-- <div class="fh5co-intro fh5co-table-cell"> -->
-							<!-- <h1 class="text-center">Less is more</h1> -->
-							<!-- <p>Made with love by the fine folks at <a href="http://freehtml5.co">FreeHTML5.co</a></p> -->
-						<!-- </div> -->
-					<!-- </div> -->
-				<!-- </div> -->
-			<!-- </div> -->
-		<!-- </div> -->
 
-		<!-- <div class="fh5co-section"> -->
-			<!-- <div class="container"> -->
+      <!-- <div class="fh5co-section"> -->
 
-				<!-- <div class="row"> -->
-					<!-- <div class="col-md-12"> -->
-						<!-- <div class="row"> -->
-							<!-- <div class="col-md-6"> -->
-								<!-- <h2>Made With Love</h2> -->
-							<!-- </div> -->
-						<!-- </div> -->
-					<!-- </div> -->
-					<!-- <div class="col-md-6"> -->
-						<!-- <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar. The Big Oxmox advised her not to do so, because there were thousands of bad Commas, wild Question Marks and devious Semikoli, but the Little Blind Text didn’t listen.</p> -->
-					<!-- </div> -->
-					<!-- <div class="col-md-6"> -->
-						<!-- <p>She packed her seven versalia, put her initial into the belt and made herself on the way. When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane.</p> -->
-					<!-- </div> -->
-				<!-- </div> -->
+        <!-- <div class="container"> -->
 
-			<!-- </div> -->
-		<!-- </div> -->
-</div>
-	</div> <!-- END fh5co-wrap -->
 
+
+          <!-- <div class="row"> -->
+
+            <!-- <div class="col-md-12"> -->
+
+              <!-- <div class="row"> -->
+
+                <!-- <div class="col-md-6"> -->
+
+                  <!-- <h2>Made With Love</h2> -->
+
+                <!-- </div> -->
+
+              <!-- </div> -->
+
+            <!-- </div> -->
+
+            <!-- <div class="col-md-6"> -->
+
+              <!-- <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar. The Big Oxmox advised her not to do so, because there were thousands of bad Commas, wild Question Marks and devious Semikoli, but the Little Blind Text didn’t listen.</p> -->
+
+            <!-- </div> -->
+
+            <!-- <div class="col-md-6"> -->
+
+              <!-- <p>She packed her seven versalia, put her initial into the belt and made herself on the way. When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane.</p> -->
+
+            <!-- </div> -->
+
+          <!-- </div> -->
+
+
+
+        <!-- </div> -->
+
+      <!-- </div> -->
+
+      </div>
+
+    </div> <!-- END fh5co-wrap -->
+	</body>
 
 	<footer id="fh5co-footer">
 		<div class="container">
@@ -285,7 +350,7 @@
 				</div>
 			</div>
 		</div>
-	<!-- </footer>
+	</footer>
 	
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
@@ -301,7 +366,5 @@
 	<script src="js/main.js"></script>
 	<!-- Clock -->
 	<script src="js/clock.js"></script>
-
-	</body>
 </html>
 
